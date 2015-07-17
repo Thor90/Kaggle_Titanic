@@ -1,0 +1,23 @@
+# Kaggle Titanic Project
+
+train<-read.csv("train.csv")
+attach(train)
+summary(train) # we are motivated to see how sex, pclass, and age can predict survival
+
+table(Survived, Sex) # visualize Survived and Sex 
+table(Survived, Pclass) # visualize Survived and Pclass
+Pclass=factor(train$Pclass, labels=c("one", "two", "three")) # We tell R that Pclass is categorical 
+as.factor(Sex) 
+as.factor(Pclass)
+contrasts(Pclass)
+Pclass_one<-relevel(Pclass, ref="one") # set reference as "one" to help interpretation later
+qqnorm(Age) # we examine age
+
+test1<-glm(Survived~Sex+Pclass_one+Age, data=train, family="binomial") # interation
+summary(test1) # summary result
+
+model<-coef(summary(test1)) 
+model[, "Estimate"]<-exp(coef(test1))
+model # look at each probability
+library(effects) # graphing predicted values
+plot(allEffects(test1))
